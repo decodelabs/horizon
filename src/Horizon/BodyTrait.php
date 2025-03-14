@@ -39,7 +39,7 @@ trait BodyTrait
     public Tag $bodyTag;
 
     /**
-     * @var ?Closure(mixed):Markup
+     * @var ?Closure(mixed):mixed
      */
     public ?Closure $layout = null;
 

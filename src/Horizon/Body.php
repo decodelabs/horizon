@@ -30,7 +30,7 @@ interface Body
     public Tag $bodyTag { get; set; }
 
     /**
-     * @var ?Closure(mixed):Markup
+     * @var ?Closure(mixed):mixed
      */
     public ?Closure $layout { get; set; }
 
