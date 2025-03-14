@@ -83,6 +83,7 @@ class MyAction implements Action
         });
     }
 }
+```
 
 ## Licensing
 
