@@ -40,9 +40,14 @@ trait BodyTrait
             $content = $content($this);
         }
 
-        return $this->bodyTag->renderWith(
+        /**
+         * @var Buffer $output
+         */
+        $output = $this->bodyTag->renderWith(
             content: ContentCollection::normalize($content, $this->renderPretty),
             pretty: $this->renderPretty
-        );
+        ) ?? new Buffer('<body></body>');
+
+        return $output;
     }
 }

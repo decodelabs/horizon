@@ -9,17 +9,13 @@ declare(strict_types=1);
 
 namespace DecodeLabs\Horizon;
 
-use DecodeLabs\Harvest;
-use DecodeLabs\Harvest\Response;
-use DecodeLabs\Harvest\ResponseProxy;
 use DecodeLabs\Tagged\Buffer;
 use DecodeLabs\Tagged\Tag;
 
 class Page implements
     Head,
     Body,
-    Renderable,
-    ResponseProxy
+    Renderable
 {
     use HeadTrait {
         HeadTrait::__construct as __constructHead;
@@ -47,21 +43,18 @@ class Page implements
     {
         $body = $this->renderBody();
 
+        /**
+         * @var Buffer $buffer
+         */
         $buffer = $this->htmlTag->renderWith(
             content: [
                 $this->renderHead(),
                 $body
             ],
             pretty: $this->renderPretty
-        );
+        ) ?? new Buffer('<html><head></head><body></body></html>');
 
         $buffer->prepend('<!DOCTYPE html>'."\n");
-
         return $buffer;
-    }
-
-    public function toHttpResponse(): Response
-    {
-        return Harvest::html($this->render());
     }
 }

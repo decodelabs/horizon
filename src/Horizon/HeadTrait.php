@@ -13,6 +13,7 @@ use Closure;
 use DecodeLabs\Coercion;
 use DecodeLabs\Tagged\Buffer;
 use DecodeLabs\Tagged\Element;
+use DecodeLabs\Tagged\Markup;
 use DecodeLabs\Tagged\Tag;
 
 /**
@@ -32,7 +33,7 @@ trait HeadTrait
             $title = Coercion::tryString($this->rawTitle);
 
             if($this->titleDecorator === null) {
-                return $title;
+                return $title ?? 'untitled';
             }
 
             return Coercion::tryString(($this->titleDecorator)($title)) ?? $title ?? 'untitled';
@@ -51,12 +52,31 @@ trait HeadTrait
      */
     protected(set) array $meta = [];
 
+    /**
+     * @var array<string,PriorityMarkup>
+     */
+    protected(set) array $appendHead = [];
 
     public Tag $headTag;
 
     public function __construct()
     {
         $this->headTag = new Tag('head');
+    }
+
+
+    /**
+     * @param iterable<string,string|Tag> $meta
+     * @return $this
+     */
+    public function applyMeta(
+        iterable $meta
+    ): static {
+        foreach($meta as $key => $value) {
+            $this->setMeta($key, $value);
+        }
+
+        return $this;
     }
 
     /**
@@ -100,8 +120,79 @@ trait HeadTrait
         string $key
     ): ?string {
         return Coercion::tryString(
-            $this->meta[$key]?->getAttribute('content')
+            ($this->meta[$key] ?? null)?->getAttribute('content')
         );
+    }
+
+    /**
+     * @return $this
+     */
+    public function removeMeta(
+        string $key
+    ): static {
+        unset($this->meta[$key]);
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function clearMeta(): static {
+        $this->meta = [];
+        return $this;
+    }
+
+
+    /**
+     * @return $this
+     */
+    public function appendHead(
+        string $key,
+        Markup $value,
+        int $priority = 0
+    ): static {
+        if(!$value instanceof PriorityMarkup) {
+            $value = new PriorityMarkup($value, $priority);
+        }
+
+        $this->appendHead[$key] = $value;
+        return $this;
+    }
+
+    public function hasAppendHead(
+        string $key
+    ): bool {
+        return isset($this->appendHead[$key]);
+    }
+
+    public function getAppendHead(
+        string $key
+    ): ?Markup {
+        return ($this->appendHead[$key] ?? null)?->markup;
+    }
+
+    public function getAppendHeadPriority(
+        string $key
+    ): ?int {
+        return ($this->appendHead[$key] ?? null)?->priority;
+    }
+
+    /**
+     * @return $this
+     */
+    public function removeAppendHead(
+        string $key
+    ): static {
+        unset($this->appendHead[$key]);
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function clearAppendHead(): static {
+        $this->appendHead = [];
+        return $this;
     }
 
 
@@ -115,9 +206,7 @@ trait HeadTrait
                 yield new Element('meta', null, ['charset' => $this->charset]);
 
                 // Title
-                if(null !== ($title = $this->title)) {
-                    yield new Element('title', $title);
-                }
+                yield new Element('title', $this->title);
 
                 if(
                     $this->base !== null ||
@@ -136,6 +225,15 @@ trait HeadTrait
                 // Meta
                 foreach($this->meta as $tag) {
                     yield $tag;
+                }
+
+                // Append head
+                uasort($this->appendHead, function($a, $b) {
+                    return $a->priority <=> $b->priority;
+                });
+
+                foreach($this->appendHead as $tag) {
+                    yield $tag->markup;
                 }
             },
             pretty: $this->renderPretty
