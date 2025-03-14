@@ -11,12 +11,21 @@ namespace DecodeLabs\Horizon;
 
 use DecodeLabs\Tagged\Markup;
 
+/**
+ * @template T of Markup
+ */
 class PriorityMarkup implements Markup
 {
     public int $priority = 0;
 
+    /**
+     * @var T
+     */
     public Markup $markup;
 
+    /**
+     * @param T $markup
+     */
     public function __construct(
         Markup $markup,
         int $priority = 0

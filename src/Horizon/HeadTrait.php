@@ -53,7 +53,17 @@ trait HeadTrait
     protected(set) array $meta = [];
 
     /**
-     * @var array<string,PriorityMarkup>
+     * @var array<string,PriorityMarkup<Tag>>
+     */
+    protected(set) array $links = [];
+
+    /**
+     * @var array<string,PriorityMarkup<Tag>>
+     */
+    protected(set) array $scripts = [];
+
+    /**
+     * @var array<string,PriorityMarkup<Markup>>
      */
     protected(set) array $appendHead = [];
 
@@ -86,7 +96,8 @@ trait HeadTrait
     public function setMeta(
         string $key,
         string|Tag $value,
-        array $attributes = []
+        array $attributes = [],
+        string|int|float|bool|null ...$attributeList
     ): static {
         $parts = explode('=', $key, 2);
         $key = array_pop($parts);
@@ -99,7 +110,8 @@ trait HeadTrait
             ]);
         }
 
-        $value->setAttributes($attributes);
+        /** @var array<string,string|bool|int|float> $attributeList */
+        $value->setAttributes($attributeList + $attributes);
         $this->meta[$key] = $value;
         return $this;
     }
@@ -141,6 +153,131 @@ trait HeadTrait
         $this->meta = [];
         return $this;
     }
+
+
+
+
+    /**
+     * @param array<string,string|int|float|bool> $attributes
+     * @return $this
+     */
+    public function addLink(
+        string $key,
+        ?Tag $tag = null,
+        int $priority = 0,
+        array $attributes = [],
+        string|int|float|bool|null ...$attributeList
+    ): static {
+        if($tag === null) {
+            /** @var array<string,string|int|float|bool|null> $attributeList */
+            $tag = new Element('link', null, $attributeList + $attributes);
+        }
+
+        $this->links[$key] = new PriorityMarkup($tag, $priority);
+        return $this;
+    }
+
+    public function hasLink(
+        string $key
+    ): bool {
+        return isset($this->links[$key]);
+    }
+
+    public function getLink(
+        string $key
+    ): ?Tag {
+        return ($this->links[$key] ?? null)?->markup;
+    }
+
+    public function getLinkPriority(
+        string $key
+    ): ?int {
+        return ($this->links[$key] ?? null)?->priority;
+    }
+
+    /**
+     * @return $this
+     */
+    public function removeLink(
+        string $key
+    ): static {
+        unset($this->links[$key]);
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function clearLinks(): static
+    {
+        $this->links = [];
+        return $this;
+    }
+
+
+
+
+
+    /**
+     * @param array<string,string|int|float|bool> $attributes
+     * @return $this
+     */
+    public function addScript(
+        string $key,
+        ?Tag $tag = null,
+        int $priority = 0,
+        mixed $script = null,
+        array $attributes = [],
+        string|int|float|bool|null ...$attributeList
+    ): static {
+        if($tag === null) {
+            /** @var array<string,string|int|float|bool|null> $attributeList */
+            $tag = new Element('script', $script, $attributeList + $attributes);
+        }
+
+        $this->scripts[$key] = new PriorityMarkup($tag, $priority);
+        return $this;
+    }
+
+    public function hasScript(
+        string $key
+    ): bool {
+        return isset($this->scripts[$key]);
+    }
+
+    public function getScript(
+        string $key
+    ): ?Tag {
+        return ($this->scripts[$key] ?? null)?->markup;
+    }
+
+    public function getScriptPriority(
+        string $key
+    ): ?int {
+        return ($this->scripts[$key] ?? null)?->priority;
+    }
+
+    /**
+     * @return $this
+     */
+    public function removeScript(
+        string $key
+    ): static {
+        unset($this->scripts[$key]);
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function clearScripts(): static
+    {
+        $this->scripts = [];
+        return $this;
+    }
+
+
+
 
 
     /**
@@ -190,7 +327,8 @@ trait HeadTrait
     /**
      * @return $this
      */
-    public function clearAppendHead(): static {
+    public function clearAppendHead(): static
+    {
         $this->appendHead = [];
         return $this;
     }
@@ -219,21 +357,44 @@ trait HeadTrait
                 }
 
                 // Links
+                if(!empty($this->links)) {
+                    uasort($this->links, function($a, $b) {
+                        return $a->priority <=> $b->priority;
+                    });
+
+                    foreach($this->links as $tag) {
+                        yield $tag->markup;
+                    }
+                }
+
 
                 // Scripts
+                if(!empty($this->scripts)) {
+                    uasort($this->scripts, function($a, $b) {
+                        return $a->priority <=> $b->priority;
+                    });
+
+                    foreach($this->scripts as $tag) {
+                        yield $tag->markup;
+                    }
+                }
+
 
                 // Meta
                 foreach($this->meta as $tag) {
                     yield $tag;
                 }
 
-                // Append head
-                uasort($this->appendHead, function($a, $b) {
-                    return $a->priority <=> $b->priority;
-                });
 
-                foreach($this->appendHead as $tag) {
-                    yield $tag->markup;
+                // Append head
+                if(!empty($this->appendHead)) {
+                    uasort($this->appendHead, function($a, $b) {
+                        return $a->priority <=> $b->priority;
+                    });
+
+                    foreach($this->appendHead as $tag) {
+                        yield $tag->markup;
+                    }
                 }
             },
             pretty: $this->renderPretty

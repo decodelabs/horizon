@@ -30,7 +30,17 @@ interface Head extends Renderable
     public array $meta { get; }
 
     /**
-     * @var array<string,PriorityMarkup>
+     * @var array<string,PriorityMarkup<Tag>>
+     */
+    public array $links { get; }
+
+    /**
+     * @var array<string,PriorityMarkup<Tag>>
+     */
+    public array $scripts { get; }
+
+    /**
+     * @var array<string,PriorityMarkup<Markup>>
      */
     public array $appendHead { get; }
 
@@ -49,7 +59,8 @@ interface Head extends Renderable
     public function setMeta(
         string $key,
         string|Tag $value,
-        array $attributes = []
+        array $attributes = [],
+        string|int|float|bool|null ...$attributeList
     ): static;
 
     public function hasMeta(
@@ -76,6 +87,82 @@ interface Head extends Renderable
      */
     public function clearMeta(): static;
 
+
+
+    /**
+     * @param array<string,string|int|float|bool> $attributes
+     * @return $this
+     */
+    public function addLink(
+        string $key,
+        ?Tag $tag = null,
+        int $priority = 0,
+        array $attributes = [],
+        string|int|float|bool|null ...$attributeList
+    ): static;
+
+    public function hasLink(
+        string $key
+    ): bool;
+
+    public function getLink(
+        string $key
+    ): ?Tag;
+
+    public function getLinkPriority(
+        string $key
+    ): ?int;
+
+    /**
+     * @return $this
+     */
+    public function removeLink(
+        string $key
+    ): static;
+
+    /**
+     * @return $this
+     */
+    public function clearLinks(): static;
+
+
+
+    /**
+     * @param array<string,string|int|float|bool> $attributes
+     * @return $this
+     */
+    public function addScript(
+        string $key,
+        ?Tag $tag = null,
+        int $priority = 0,
+        mixed $script = null,
+        array $attributes = [],
+        string|int|float|bool|null ...$attributeList
+    ): static;
+
+    public function hasScript(
+        string $key
+    ): bool;
+
+    public function getScript(
+        string $key
+    ): ?Tag;
+
+    public function getScriptPriority(
+        string $key
+    ): ?int;
+
+    /**
+     * @return $this
+     */
+    public function removeScript(
+        string $key
+    ): static;
+
+    /**
+     * @return $this
+     */
+    public function clearScripts(): static;
 
 
 
