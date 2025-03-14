@@ -63,7 +63,7 @@ $page = new Page(function($page) {
 
 Horizon includes a `Harvest` transformer that can be used to convert a `Page` instance into a PSR-7 HTTP Response during the `Harvest` request lifecycle.
 
-Harvest Transformers should be managed by the HTTP Middleware that needs to transform Responses, for example `Greenleaf` will transparently call `transform()` on the return value of a `Greenleaf Action`.
+Harvest Transformers should be managed by the HTTP Middleware that needs to transform Responses, for example `Greenleaf` will transparently call `transform()` for the return value of a `Greenleaf Action`.
 
 The result is that you can return a `Page` instance from a `Greenleaf Action` and it will be automatically transformed into a PSR-7 Response.
 
