@@ -44,6 +44,8 @@ interface Head extends Renderable
      */
     public array $appendHead { get; }
 
+    public Tag $headTag { get; set; }
+
     /**
      * @param iterable<string,string|Tag> $meta
      * @return $this

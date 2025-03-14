@@ -27,6 +27,13 @@ interface Body
      */
     public array $appendBody { get; }
 
+    public Tag $bodyTag { get; set; }
+
+    /**
+     * @var ?Closure(mixed):Markup
+     */
+    public ?Closure $layout { get; set; }
+
 
     /**
      * @param array<string,string|int|float|bool> $attributes

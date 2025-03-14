@@ -38,6 +38,11 @@ trait BodyTrait
 
     public Tag $bodyTag;
 
+    /**
+     * @var ?Closure(mixed):Markup
+     */
+    public ?Closure $layout = null;
+
     public function __construct(
         mixed $content = null
     ) {
@@ -175,8 +180,15 @@ trait BodyTrait
          * @var Buffer $output
          */
         $output = $this->bodyTag->renderWith(
-            content: ContentCollection::normalize(function() use($content) {
+            content: function() use($content) {
                 // Content
+                $content = ContentCollection::normalize($content, $this->renderPretty);
+
+                // Layout
+                if($this->layout) {
+                    $content = ($this->layout)($content);
+                }
+
                 yield $content;
 
                 // Append body
@@ -200,7 +212,7 @@ trait BodyTrait
                         yield $tag->markup;
                     }
                 }
-            }, $this->renderPretty),
+            },
             pretty: $this->renderPretty
         ) ?? new Buffer('<body></body>');
 
