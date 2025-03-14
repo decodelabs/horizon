@@ -26,6 +26,12 @@
         }
     },
     "extra": {
+        "effigy": {
+            "exports": [
+                ".iota",
+                "public"
+            ]
+        },
         "branch-alias": {
             "dev-develop": "0.1.x-dev"
         }
