@@ -1,3 +1,6 @@
+## v0.1.3 (2025-03-24)
+* Fixed Zest URL handling
+
 ## v0.1.2 (2025-03-14)
 * Fixed layout PHPStan interface
 

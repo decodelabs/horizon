@@ -60,46 +60,52 @@ class Page implements
         Manifest $manifest
     ): static {
         foreach($manifest->getCssData() as $file => $attributes) {
-            if(!str_starts_with($file, '/')) {
-                $file = '/'.$file;
-            }
-
             /** @var array<string,string|bool|int|float> $attributes */
             $this->addLink(
                 key: 'zest:'.$file,
                 rel: 'stylesheet',
-                href: $file,
+                href: $this->normalizeUrl($file),
                 attributes: $attributes
             );
         }
 
         foreach($manifest->getHeadJsData() as $file => $attributes) {
-            if(!str_starts_with($file, '/')) {
-                $file = '/'.$file;
-            }
-
             /** @var array<string,string|bool|int|float> $attributes */
             $this->addScript(
                 key: 'zest:'.$file,
-                src: $file,
+                src: $this->normalizeUrl($file),
                 attributes: $attributes
             );
         }
 
         foreach($manifest->getBodyJsData() as $file => $attributes) {
-            if(!str_starts_with($file, '/')) {
-                $file = '/'.$file;
-            }
-
             /** @var array<string,string|bool|int|float> $attributes */
             $this->addBodyScript(
                 key: 'zest:'.$file,
-                src: $file,
+                src: $this->normalizeUrl($file),
                 attributes: $attributes
             );
         }
 
         return $this;
+    }
+
+    private function normalizeUrl(
+        string $url
+    ): string {
+        if(
+            str_starts_with($url, 'http://') ||
+            str_starts_with($url, 'https://') ||
+            str_starts_with($url, '//')
+        ) {
+            return $url;
+        }
+
+        if(!str_starts_with($url, '/')) {
+            $url = '/'.$url;
+        }
+
+        return $url;
     }
 
 
