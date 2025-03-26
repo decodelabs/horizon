@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace DecodeLabs\Harvest\Transformer\DecodeLabs\Horizon;
 
+use DecodeLabs\Genesis;
 use DecodeLabs\Harvest;
 use DecodeLabs\Harvest\Transformer;
 use DecodeLabs\Horizon\Page as HorizonPage;
@@ -24,7 +25,14 @@ class Page implements Transformer
         Request $request,
         mixed $page
     ): Response {
+        if(class_exists(Genesis::class)) {
+            $isDev = Genesis::$environment->isDevelopment();
+        } else {
+            $isDev = false;
+        }
+
+
         // TODO: add headers
-        return Harvest::html($page->render());
+        return Harvest::html($page->render($isDev));
     }
 }
