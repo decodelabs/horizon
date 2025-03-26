@@ -1,3 +1,6 @@
+## v0.2.1 (2025-03-26)
+* Made attribute values nullable
+
 ## v0.2.0 (2025-03-26)
 * Split out asset handling to Property groups
 * Replaced Renderable interface with Elementary version

@@ -20,7 +20,7 @@ interface LinkCollection
     public array $links { get; }
 
     /**
-     * @param array<string,string|int|float|bool> $attributes
+     * @param array<string,string|int|float|bool|null> $attributes
      * @return $this
      */
     public function addLink(
