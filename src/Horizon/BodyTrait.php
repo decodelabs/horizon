@@ -10,11 +10,11 @@ declare(strict_types=1);
 namespace DecodeLabs\Horizon;
 
 use Closure;
-use DecodeLabs\Coercion;
+use DecodeLabs\Horizon\Property\BodyScriptCollectionTrait;
 use DecodeLabs\Tagged\Buffer;
 use DecodeLabs\Tagged\ContentCollection;
-use DecodeLabs\Tagged\Element;
 use DecodeLabs\Tagged\Markup;
+use DecodeLabs\Tagged\PriorityMarkup;
 use DecodeLabs\Tagged\Tag;
 
 /**
@@ -22,14 +22,10 @@ use DecodeLabs\Tagged\Tag;
  */
 trait BodyTrait
 {
+    use BodyScriptCollectionTrait;
     use RenderableTrait;
 
     public mixed $content = null;
-
-    /**
-     * @var array<string,PriorityMarkup<Tag>>
-     */
-    protected(set) array $bodyScripts = [];
 
     /**
      * @var array<string,PriorityMarkup<Markup>>
@@ -49,67 +45,6 @@ trait BodyTrait
         $this->content = $content;
         $this->bodyTag = new Tag('body');
     }
-
-
-    /**
-     * @param array<string,string|int|float|bool> $attributes
-     * @return $this
-     */
-    public function addBodyScript(
-        string $key,
-        ?Tag $tag = null,
-        int $priority = 0,
-        mixed $script = null,
-        array $attributes = [],
-        string|int|float|bool|null ...$attributeList
-    ): static {
-        if($tag === null) {
-            /** @var array<string,string|int|float|bool|null> $attributeList */
-            $tag = new Element('script', $script, $attributeList + $attributes);
-        }
-
-        $this->bodyScripts[$key] = new PriorityMarkup($tag, $priority);
-        return $this;
-    }
-
-    public function hasBodyScript(
-        string $key
-    ): bool {
-        return isset($this->bodyScripts[$key]);
-    }
-
-    public function getBodyScript(
-        string $key
-    ): ?Tag {
-        return ($this->bodyScripts[$key] ?? null)?->markup;
-    }
-
-    public function getBodyScriptPriority(
-        string $key
-    ): ?int {
-        return ($this->bodyScripts[$key] ?? null)?->priority;
-    }
-
-    /**
-     * @return $this
-     */
-    public function removeBodyScript(
-        string $key
-    ): static {
-        unset($this->bodyScripts[$key]);
-        return $this;
-    }
-
-    /**
-     * @return $this
-     */
-    public function clearBodyScripts(): static
-    {
-        $this->bodyScripts = [];
-        return $this;
-    }
-
-
 
 
 
@@ -168,8 +103,9 @@ trait BodyTrait
 
 
 
-    public function render(): Buffer
-    {
+    public function render(
+        bool $pretty = false
+    ): Buffer {
         $content = $this->content;
 
         if($content instanceof Closure) {
@@ -180,9 +116,9 @@ trait BodyTrait
          * @var Buffer $output
          */
         $output = $this->bodyTag->renderWith(
-            content: function() use($content) {
+            content: function() use($content, $pretty) {
                 // Content
-                $content = ContentCollection::normalize($content, $this->renderPretty);
+                $content = ContentCollection::normalize($content, $pretty);
 
                 // Layout
                 if($this->layout) {
@@ -213,7 +149,7 @@ trait BodyTrait
                     }
                 }
             },
-            pretty: $this->renderPretty
+            pretty: $pretty
         ) ?? new Buffer('<body></body>');
 
         return $output;
