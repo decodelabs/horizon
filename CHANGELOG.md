@@ -1,3 +1,6 @@
+## v0.1.4 (2025-03-25)
+* Upgraded Tagged dependency
+
 ## v0.1.3 (2025-03-24)
 * Fixed Zest URL handling
 
