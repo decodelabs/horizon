@@ -24,7 +24,7 @@ trait BodyScriptCollectionTrait
     protected(set) array $bodyScripts = [];
 
     /**
-     * @param array<string,string|int|float|bool> $attributes
+     * @param array<string,string|int|float|bool|null> $attributes
      * @return $this
      */
     public function addBodyScript(
