@@ -118,14 +118,14 @@ class Page implements
     public function render(
         bool $pretty = false
     ): Buffer {
-        $body = $this->renderBody();
+        $body = $this->renderBody($pretty);
 
         /**
          * @var Buffer $buffer
          */
         $buffer = $this->htmlTag->renderWith(
             content: [
-                $this->renderHead(),
+                $this->renderHead($pretty),
                 $body
             ],
             pretty: $pretty
