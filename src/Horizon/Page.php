@@ -10,10 +10,15 @@ declare(strict_types=1);
 namespace DecodeLabs\Horizon;
 
 use DecodeLabs\Coercion;
+use DecodeLabs\Elementary\Renderable;
 use DecodeLabs\Tagged\Buffer;
+use DecodeLabs\Tagged\Markup;
 use DecodeLabs\Tagged\Tag;
 use DecodeLabs\Zest\Manifest;
 
+/**
+ * @implements Renderable<Buffer>
+ */
 class Page implements
     Head,
     Body,
@@ -110,8 +115,9 @@ class Page implements
 
 
 
-    public function render(): Buffer
-    {
+    public function render(
+        bool $pretty = false
+    ): Buffer {
         $body = $this->renderBody();
 
         /**
@@ -122,7 +128,7 @@ class Page implements
                 $this->renderHead(),
                 $body
             ],
-            pretty: $this->renderPretty
+            pretty: $pretty
         ) ?? new Buffer('<html><head></head><body></body></html>');
 
         $buffer->prepend('<!DOCTYPE html>'."\n");

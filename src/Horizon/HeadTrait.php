@@ -11,9 +11,13 @@ namespace DecodeLabs\Horizon;
 
 use Closure;
 use DecodeLabs\Coercion;
+use DecodeLabs\Horizon\Property\LinkCollectionTrait;
+use DecodeLabs\Horizon\Property\MetaCollectionTrait;
+use DecodeLabs\Horizon\Property\ScriptCollectionTrait;
 use DecodeLabs\Tagged\Buffer;
 use DecodeLabs\Tagged\Element;
 use DecodeLabs\Tagged\Markup;
+use DecodeLabs\Tagged\PriorityMarkup;
 use DecodeLabs\Tagged\Tag;
 
 /**
@@ -21,6 +25,9 @@ use DecodeLabs\Tagged\Tag;
  */
 trait HeadTrait
 {
+    use LinkCollectionTrait;
+    use MetaCollectionTrait;
+    use ScriptCollectionTrait;
     use RenderableTrait;
 
     public string $charset = 'utf-8';
@@ -46,22 +53,6 @@ trait HeadTrait
     public ?string $base = null;
     public ?string $baseTarget = null;
 
-
-    /**
-     * @var array<string,Tag>
-     */
-    protected(set) array $meta = [];
-
-    /**
-     * @var array<string,PriorityMarkup<Tag>>
-     */
-    protected(set) array $links = [];
-
-    /**
-     * @var array<string,PriorityMarkup<Tag>>
-     */
-    protected(set) array $scripts = [];
-
     /**
      * @var array<string,PriorityMarkup<Markup>>
      */
@@ -73,212 +64,6 @@ trait HeadTrait
     {
         $this->headTag = new Tag('head');
     }
-
-
-    /**
-     * @param iterable<string,string|Tag> $meta
-     * @return $this
-     */
-    public function applyMeta(
-        iterable $meta
-    ): static {
-        foreach($meta as $key => $value) {
-            $this->setMeta($key, $value);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param array<string,string|int|float|bool> $attributes
-     * @return $this
-     */
-    public function setMeta(
-        string $key,
-        string|Tag $value,
-        array $attributes = [],
-        string|int|float|bool|null ...$attributeList
-    ): static {
-        $parts = explode('=', $key, 2);
-        $key = array_pop($parts);
-        $nameKey = array_shift($parts) ?? 'name';
-
-        if(is_string($value)) {
-            $value = new Element('meta', null, [
-                $nameKey => $key,
-                'content' => $value
-            ]);
-        }
-
-        /** @var array<string,string|bool|int|float> $attributeList */
-        $value->setAttributes($attributeList + $attributes);
-        $this->meta[$key] = $value;
-        return $this;
-    }
-
-    public function hasMeta(
-        string $key
-    ): bool {
-        return isset($this->meta[$key]);
-    }
-
-    public function getMeta(
-        string $key
-    ): ?Tag {
-        return $this->meta[$key] ?? null;
-    }
-
-    public function getMetaValue(
-        string $key
-    ): ?string {
-        return Coercion::tryString(
-            ($this->meta[$key] ?? null)?->getAttribute('content')
-        );
-    }
-
-    /**
-     * @return $this
-     */
-    public function removeMeta(
-        string $key
-    ): static {
-        unset($this->meta[$key]);
-        return $this;
-    }
-
-    /**
-     * @return $this
-     */
-    public function clearMeta(): static {
-        $this->meta = [];
-        return $this;
-    }
-
-
-
-
-    /**
-     * @param array<string,string|int|float|bool> $attributes
-     * @return $this
-     */
-    public function addLink(
-        string $key,
-        ?Tag $tag = null,
-        int $priority = 0,
-        array $attributes = [],
-        string|int|float|bool|null ...$attributeList
-    ): static {
-        if($tag === null) {
-            /** @var array<string,string|int|float|bool|null> $attributeList */
-            $tag = new Element('link', null, $attributeList + $attributes);
-        }
-
-        $this->links[$key] = new PriorityMarkup($tag, $priority);
-        return $this;
-    }
-
-    public function hasLink(
-        string $key
-    ): bool {
-        return isset($this->links[$key]);
-    }
-
-    public function getLink(
-        string $key
-    ): ?Tag {
-        return ($this->links[$key] ?? null)?->markup;
-    }
-
-    public function getLinkPriority(
-        string $key
-    ): ?int {
-        return ($this->links[$key] ?? null)?->priority;
-    }
-
-    /**
-     * @return $this
-     */
-    public function removeLink(
-        string $key
-    ): static {
-        unset($this->links[$key]);
-        return $this;
-    }
-
-    /**
-     * @return $this
-     */
-    public function clearLinks(): static
-    {
-        $this->links = [];
-        return $this;
-    }
-
-
-
-
-
-    /**
-     * @param array<string,string|int|float|bool> $attributes
-     * @return $this
-     */
-    public function addScript(
-        string $key,
-        ?Tag $tag = null,
-        int $priority = 0,
-        mixed $script = null,
-        array $attributes = [],
-        string|int|float|bool|null ...$attributeList
-    ): static {
-        if($tag === null) {
-            /** @var array<string,string|int|float|bool|null> $attributeList */
-            $tag = new Element('script', $script, $attributeList + $attributes);
-        }
-
-        $this->scripts[$key] = new PriorityMarkup($tag, $priority);
-        return $this;
-    }
-
-    public function hasScript(
-        string $key
-    ): bool {
-        return isset($this->scripts[$key]);
-    }
-
-    public function getScript(
-        string $key
-    ): ?Tag {
-        return ($this->scripts[$key] ?? null)?->markup;
-    }
-
-    public function getScriptPriority(
-        string $key
-    ): ?int {
-        return ($this->scripts[$key] ?? null)?->priority;
-    }
-
-    /**
-     * @return $this
-     */
-    public function removeScript(
-        string $key
-    ): static {
-        unset($this->scripts[$key]);
-        return $this;
-    }
-
-    /**
-     * @return $this
-     */
-    public function clearScripts(): static
-    {
-        $this->scripts = [];
-        return $this;
-    }
-
-
-
-
 
     /**
      * @return $this
@@ -336,8 +121,9 @@ trait HeadTrait
 
 
 
-    public function render(): Buffer
-    {
+    public function render(
+        bool $pretty = false
+    ): Buffer {
         return $this->headTag->renderWith(
             content: function() {
                 // Charset
@@ -397,7 +183,7 @@ trait HeadTrait
                     }
                 }
             },
-            pretty: $this->renderPretty
+            pretty: $pretty
         );
     }
 }

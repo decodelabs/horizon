@@ -13,10 +13,8 @@ use DecodeLabs\Coercion;
 
 trait RenderableTrait
 {
-    public bool $renderPretty = true;
-
     public function __toString(): string
     {
-        return Coercion::toString($this->render());
+        return Coercion::toString($this->render(true));
     }
 }

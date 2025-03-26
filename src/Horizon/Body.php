@@ -10,17 +10,21 @@ declare(strict_types=1);
 namespace DecodeLabs\Horizon;
 
 use Closure;
+use DecodeLabs\Elementary\Renderable;
+use DecodeLabs\Horizon\Property\BodyScriptCollection;
+use DecodeLabs\Tagged\Buffer;
 use DecodeLabs\Tagged\Markup;
+use DecodeLabs\Tagged\PriorityMarkup;
 use DecodeLabs\Tagged\Tag;
 
-interface Body
+/**
+ * @extends Renderable<Buffer>
+ */
+interface Body extends
+    BodyScriptCollection,
+    Renderable
 {
     public mixed $content { get; set; }
-
-    /**
-     * @var array<string,PriorityMarkup<Tag>>
-     */
-    public array $bodyScripts { get; }
 
     /**
      * @var array<string,PriorityMarkup<Markup>>
@@ -33,44 +37,6 @@ interface Body
      * @var ?Closure(mixed):mixed
      */
     public ?Closure $layout { get; set; }
-
-
-    /**
-     * @param array<string,string|int|float|bool> $attributes
-     * @return $this
-     */
-    public function addBodyScript(
-        string $key,
-        ?Tag $tag = null,
-        int $priority = 0,
-        mixed $script = null,
-        array $attributes = [],
-        string|int|float|bool|null ...$attributeList
-    ): static;
-
-    public function hasBodyScript(
-        string $key
-    ): bool;
-
-    public function getBodyScript(
-        string $key
-    ): ?Tag;
-
-    public function getBodyScriptPriority(
-        string $key
-    ): ?int;
-
-    /**
-     * @return $this
-     */
-    public function removeBodyScript(
-        string $key
-    ): static;
-
-    /**
-     * @return $this
-     */
-    public function clearBodyScripts(): static;
 
 
 

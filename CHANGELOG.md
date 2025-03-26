@@ -1,3 +1,8 @@
+## v0.2.0 (2025-03-26)
+* Split out asset handling to Property groups
+* Replaced Renderable interface with Elementary version
+* Standardised render() method
+
 ## v0.1.4 (2025-03-25)
 * Upgraded Tagged dependency
 
