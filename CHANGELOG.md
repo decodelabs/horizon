@@ -1,3 +1,7 @@
+## v0.3.1 (2025-04-02)
+* Support named arguments in meta
+* Replaced applyMeta with setMetas
+
 ## v0.3.0 (2025-04-02)
 * Added Fragment component system
 * Improved layout rendering

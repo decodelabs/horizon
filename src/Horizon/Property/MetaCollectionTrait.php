@@ -26,12 +26,30 @@ trait MetaCollectionTrait
     /**
      * @param iterable<string,string|Tag> $meta
      * @return $this
+     * @deprecated
      */
     public function applyMeta(
-        iterable $meta
+        iterable $meta = [],
+        string|Tag ...$metaList
+    ): static {
+        $this->setMetas($meta, ...$metaList);
+        return $this;
+    }
+
+    /**
+     * @param iterable<string,string|Tag> $meta
+     * @return $this
+     */
+    public function setMetas(
+        iterable $meta = [],
+        string|Tag ...$metaList
     ): static {
         foreach($meta as $key => $value) {
-            $this->setMeta($key, $value);
+            $this->setMeta((string)$key, $value);
+        }
+
+        foreach($metaList as $key => $value) {
+            $this->setMeta((string)$key, $value);
         }
 
         return $this;

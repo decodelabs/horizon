@@ -22,8 +22,9 @@ interface MetaCollection
      * @param iterable<string,string|Tag> $meta
      * @return $this
      */
-    public function applyMeta(
-        iterable $meta
+    public function setMetas(
+        iterable $meta = [],
+        string|Tag ...$metaList
     ): static;
 
     /**
