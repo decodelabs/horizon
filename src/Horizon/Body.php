@@ -13,6 +13,7 @@ use Closure;
 use DecodeLabs\Elementary\Renderable;
 use DecodeLabs\Horizon\Property\BodyScriptCollection;
 use DecodeLabs\Tagged\Buffer;
+use DecodeLabs\Tagged\Component\Fragment;
 use DecodeLabs\Tagged\Markup;
 use DecodeLabs\Tagged\PriorityMarkup;
 use DecodeLabs\Tagged\Tag;
@@ -34,9 +35,9 @@ interface Body extends
     public Tag $bodyTag { get; set; }
 
     /**
-     * @var ?Closure(mixed):mixed
+     * @var Fragment|Closure(mixed):(mixed)|null
      */
-    public ?Closure $layout { get; set; }
+    public Fragment|Closure|null $layout { get; set; }
 
 
 

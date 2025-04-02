@@ -1,3 +1,7 @@
+## v0.3.0 (2025-04-02)
+* Added Fragment component system
+* Improved layout rendering
+
 ## v0.2.2 (2025-03-26)
 * Fixed pretty rendering
 
