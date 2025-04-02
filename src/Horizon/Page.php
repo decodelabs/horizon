@@ -12,7 +12,7 @@ namespace DecodeLabs\Horizon;
 use DecodeLabs\Coercion;
 use DecodeLabs\Elementary\Renderable;
 use DecodeLabs\Tagged\Buffer;
-use DecodeLabs\Tagged\Markup;
+use DecodeLabs\Tagged\Component\Fragment;
 use DecodeLabs\Tagged\Tag;
 use DecodeLabs\Zest\Manifest;
 
@@ -48,6 +48,15 @@ class Page implements
     }
 
     public Tag $htmlTag;
+
+    public static function fromFragment(
+        string $fragment,
+        mixed ...$parameters
+    ): Page {
+        return new Page(
+            new Fragment($fragment, ...$parameters)
+        );
+    }
 
     public function __construct(
         mixed $content = null

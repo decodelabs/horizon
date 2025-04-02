@@ -12,6 +12,7 @@ namespace DecodeLabs\Horizon;
 use Closure;
 use DecodeLabs\Horizon\Property\BodyScriptCollectionTrait;
 use DecodeLabs\Tagged\Buffer;
+use DecodeLabs\Tagged\Component\Fragment;
 use DecodeLabs\Tagged\ContentCollection;
 use DecodeLabs\Tagged\Markup;
 use DecodeLabs\Tagged\PriorityMarkup;
@@ -35,9 +36,27 @@ trait BodyTrait
     public Tag $bodyTag;
 
     /**
-     * @var ?Closure(mixed):mixed
+     * @var ?Closure(mixed $content):mixed
      */
-    public ?Closure $layout = null;
+    public Fragment|Closure|null $layout = null {
+        get => $this->layout;
+
+        /**
+         * @param callable|Fragment|Closure(mixed $content):(mixed)|null $layout
+         */
+        set(callable|Fragment|Closure|null $layout) {
+            if($layout instanceof Fragment) {
+                $layout->bind($this);
+            } else if(
+                !$layout instanceof Closure &&
+                is_callable($layout)
+            ) {
+                $layout = Closure::fromCallable($layout);
+            }
+
+            $this->layout = $layout;
+        }
+    }
 
     public function __construct(
         mixed $content = null
@@ -108,7 +127,10 @@ trait BodyTrait
     ): Buffer {
         $content = $this->content;
 
-        if($content instanceof Closure) {
+        if($content instanceof Fragment) {
+            $content->bind($this);
+            $content = $content->render($pretty);
+        } elseif($content instanceof Closure) {
             $content = $content($this);
         }
 
@@ -121,7 +143,12 @@ trait BodyTrait
                 $content = ContentCollection::normalize($content, $pretty);
 
                 // Layout
-                if($this->layout) {
+                if($this->layout instanceof Fragment) {
+                    $content = $this->layout->__invoke(
+                        content: $content,
+                        pretty: $pretty
+                    );
+                } elseif($this->layout) {
                     $content = ($this->layout)($content);
                 }
 
