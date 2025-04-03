@@ -1,3 +1,5 @@
+* Removed Zest dev dependency
+
 ## v0.4.0 (2025-04-03)
 * Built decorator system
 * Moved Zest support to Zest package as Decorator

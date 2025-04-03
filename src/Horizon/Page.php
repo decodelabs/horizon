@@ -15,7 +15,6 @@ use DecodeLabs\Elementary\Renderable;
 use DecodeLabs\Tagged\Buffer;
 use DecodeLabs\Tagged\Component\Fragment;
 use DecodeLabs\Tagged\Tag;
-use DecodeLabs\Zest\Manifest;
 
 /**
  * @implements Renderable<Buffer>
