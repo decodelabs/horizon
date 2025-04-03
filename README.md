@@ -32,8 +32,8 @@ use DecodeLabs\Horizon\Page;
 use DecodeLabs\Tagged as Html;
 
 $page = new Page(function($page) {
-    $page->setTitle('Hello, World!');
-    $page->addMeta('description', 'This is a test page');
+    $page->title = 'Hello, World!';
+    $page->setMeta('description', 'This is a test page');
 
     $page->addLink(
         key: 'styles',
@@ -58,6 +58,41 @@ $page = new Page(function($page) {
     yield Html::{'p'}('This is a test page');
 });
 ```
+
+### Decorators
+
+Horizon provides a simple decorator system for adding additional functionality to your pages.
+Decorators must be findable by `Archetype` - either in `DecodeLabs\Horizon\Decorator` or in a namespace registered in the `Archetype` namespace map.
+
+```php
+namespace DecodeLabs\Horizon\Decorator;
+
+use DecodeLabs\Horizon\Decorator;
+use DecodeLabs\Horizon\Page;
+
+class MyDecorator implements Decorator
+{
+    public function decorate(
+        Page $page, // Require parameter
+        string $basePath // Decorator-specific parameter
+    ): void {
+        $page->title = 'My Decorated Page';
+
+        $page->addBodyScript(
+            key: 'analytics',
+            src: $basePath.'/analytics.js'
+        );
+    }
+}
+
+$page = new Page(function($page) {
+    yield Html::{'h1'}('Hello, World!');
+    yield Html::{'p'}('This is a test page');
+});
+
+$page->decorate('MyDecorator', '/base/path');
+```
+
 
 ### Harvest Transformer
 

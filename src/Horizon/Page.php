@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace DecodeLabs\Horizon;
 
+use DecodeLabs\Archetype;
 use DecodeLabs\Coercion;
 use DecodeLabs\Elementary\Renderable;
 use DecodeLabs\Tagged\Buffer;
@@ -67,63 +68,6 @@ class Page implements
     }
 
 
-    /**
-     * @return $this
-     */
-    public function importZestManifest(
-        Manifest $manifest
-    ): static {
-        foreach($manifest->getCssData() as $file => $attributes) {
-            /** @var array<string,string|bool|int|float> $attributes */
-            $this->addLink(
-                key: 'zest:'.$file,
-                rel: 'stylesheet',
-                href: $this->normalizeUrl($file),
-                attributes: $attributes
-            );
-        }
-
-        foreach($manifest->getHeadJsData() as $file => $attributes) {
-            /** @var array<string,string|bool|int|float> $attributes */
-            $this->addScript(
-                key: 'zest:'.$file,
-                src: $this->normalizeUrl($file),
-                attributes: $attributes
-            );
-        }
-
-        foreach($manifest->getBodyJsData() as $file => $attributes) {
-            /** @var array<string,string|bool|int|float> $attributes */
-            $this->addBodyScript(
-                key: 'zest:'.$file,
-                src: $this->normalizeUrl($file),
-                attributes: $attributes
-            );
-        }
-
-        return $this;
-    }
-
-    private function normalizeUrl(
-        string $url
-    ): string {
-        if(
-            str_starts_with($url, 'http://') ||
-            str_starts_with($url, 'https://') ||
-            str_starts_with($url, '//')
-        ) {
-            return $url;
-        }
-
-        if(!str_starts_with($url, '/')) {
-            $url = '/'.$url;
-        }
-
-        return $url;
-    }
-
-
-
     public function render(
         bool $pretty = false
     ): Buffer {
@@ -142,5 +86,22 @@ class Page implements
 
         $buffer->prepend('<!DOCTYPE html>'."\n");
         return $buffer;
+    }
+
+
+    /**
+     * @return $this
+     */
+    public function decorate(
+        string|Decorator $decorator,
+        mixed ...$parameters
+    ): static {
+        if(is_string($decorator)) {
+            $class = Archetype::resolve(Decorator::class, ucfirst($decorator));
+            $decorator = new $class();
+        }
+
+        $decorator->decorate($this, ...$parameters);
+        return $this;
     }
 }

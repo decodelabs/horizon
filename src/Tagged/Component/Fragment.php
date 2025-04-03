@@ -34,6 +34,7 @@ class Fragment extends Tag implements Component
     public array $parameters = [];
 
     private bool $loaded = false;
+    private bool $rendering = false;
 
     /**
      * Generate fragment
@@ -79,6 +80,7 @@ class Fragment extends Tag implements Component
     public function __invoke(
         mixed ...$parameters
     ): ?Buffer {
+        $this->rendering = true;
         $slingshot = new Slingshot(
             parameters: $this->parameters,
         );
@@ -93,7 +95,10 @@ class Fragment extends Tag implements Component
             ($parameters['pretty'] ?? false) === true ||
             ($this->parameters['pretty'] ?? false) === true;
 
-        return ContentCollection::normalize($output, $pretty);
+        $output = ContentCollection::normalize($output, $pretty);
+
+        $this->rendering = false;
+        return $output;
     }
 
     /**
@@ -122,5 +127,23 @@ class Fragment extends Tag implements Component
     ): array {
         $ref = new ReflectionFunction($this->fragment);
         return $ref->getAttributes($name, $flags);
+    }
+
+
+    /**
+     * Dump for glitch
+     */
+    public function glitchDump(): iterable
+    {
+        if(!$this->rendering) {
+            return parent::glitchDump();
+        }
+
+        yield 'properties' => [
+            'fragment' => $this->fragment,
+            'parameters' => $this->parameters,
+            '!rendering' => $this->rendering,
+            '!loaded' => $this->loaded
+        ];
     }
 }
