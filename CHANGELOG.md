@@ -1,3 +1,9 @@
+## v0.4.0 (2025-04-03)
+* Built decorator system
+* Moved Zest support to Zest package as Decorator
+* Removed applyMeta from MetaCollectionTrait
+* Fixed Fragment dump issue
+
 ## v0.3.1 (2025-04-02)
 * Support named arguments in meta
 * Replaced applyMeta with setMetas
