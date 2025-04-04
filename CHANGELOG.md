@@ -1,3 +1,4 @@
+* Added renderContent()
 * Removed Zest dev dependency
 
 ## v0.4.0 (2025-04-03)
