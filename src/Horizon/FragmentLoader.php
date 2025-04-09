@@ -11,7 +11,7 @@ namespace DecodeLabs\Horizon;
 
 use Closure;
 use DecodeLabs\Exceptional;
-use DecodeLabs\Genesis;
+use DecodeLabs\Monarch;
 
 class FragmentLoader
 {
@@ -28,11 +28,7 @@ class FragmentLoader
             $path .= '.php';
         }
 
-        if(class_exists(Genesis::class)) {
-            $path = Genesis::resolvePath($path);
-        }
-
-        $this->resolvedPath = $path;
+        $this->resolvedPath = Monarch::$paths->resolve($path);
     }
 
     public function load(): Closure

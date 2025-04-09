@@ -67,4 +67,8 @@ interface Body extends
     ): static;
 
     public function clearAppendBody(): static;
+
+    public function renderContent(
+        bool $pretty = false
+    ): Buffer;
 }

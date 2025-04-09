@@ -181,4 +181,22 @@ trait BodyTrait
 
         return $output;
     }
+
+
+    public function renderContent(
+        bool $pretty = false
+    ): Buffer {
+        $content = $this->content;
+
+        if($content instanceof Fragment) {
+            $content->bind($this);
+            return $content->render($pretty) ?? new Buffer('');
+        }
+
+        if($content instanceof Closure) {
+            $content = ($content)($this);
+        }
+
+        return ContentCollection::normalize($content, $pretty);
+    }
 }
