@@ -9,10 +9,10 @@ declare(strict_types=1);
 
 namespace DecodeLabs\Harvest\Transformer\DecodeLabs\Horizon;
 
-use DecodeLabs\Genesis;
 use DecodeLabs\Harvest;
 use DecodeLabs\Harvest\Transformer;
 use DecodeLabs\Horizon\Page as HorizonPage;
+use DecodeLabs\Monarch;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -25,14 +25,11 @@ class Page implements Transformer
         Request $request,
         mixed $page
     ): Response {
-        if(class_exists(Genesis::class)) {
-            $isDev = Genesis::$environment->isDevelopment();
-        } else {
-            $isDev = false;
-        }
-
-
         // TODO: add headers
-        return Harvest::html($page->render($isDev));
+        return Harvest::html(
+            $page->render(
+                Monarch::isDevelopment()
+            )
+        );
     }
 }

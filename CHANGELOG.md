@@ -1,5 +1,8 @@
+## v0.4.1 (2025-04-09)
 * Added renderContent()
 * Removed Zest dev dependency
+* Upgraded Slingshot dependency
+* Added Monarch info support
 
 ## v0.4.0 (2025-04-03)
 * Built decorator system
