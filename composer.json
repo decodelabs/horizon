@@ -19,12 +19,14 @@
     },
     "require-dev": {
         "decodelabs/phpstan-decodelabs": "^0.7.0",
+        "decodelabs/greenleaf": "^0.6.1",
         "decodelabs/harvest": "^0.4.5"
     },
     "autoload": {
         "psr-4": {
             "DecodeLabs\\Horizon\\": "src/Horizon",
             "DecodeLabs\\Harvest\\Transformer\\DecodeLabs\\Horizon\\": "src/Harvest/Transformer",
+            "DecodeLabs\\Greenleaf\\PageAction\\": "src/Greenleaf/PageAction",
             "DecodeLabs\\Tagged\\": "src/Tagged"
         }
     },

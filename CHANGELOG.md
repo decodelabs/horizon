@@ -1,3 +1,7 @@
+## v0.4.2 (2025-04-11)
+* Added Greenleaf PageAction
+* Allow overriding Fragment Slingshot
+
 ## v0.4.1 (2025-04-09)
 * Added renderContent()
 * Removed Zest dev dependency
