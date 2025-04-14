@@ -11,8 +11,6 @@
 
 Horizon provides a simple structure for building and rendering HTML views using the <code>DecodeLabs\Tagged</code> interfaces.
 
-_Get news and updates on the [DecodeLabs blog](https://blog.decodelabs.com)._
-
 ---
 
 ## Installation
