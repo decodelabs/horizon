@@ -1,3 +1,7 @@
+## v0.4.3 (2025-04-15)
+* Upgraded Greenleaf
+* Added route generator & attribute support to PageAction
+
 ## v0.4.2 (2025-04-11)
 * Added Greenleaf PageAction
 * Allow overriding Fragment Slingshot
