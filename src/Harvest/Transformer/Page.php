@@ -13,8 +13,8 @@ use DecodeLabs\Harvest;
 use DecodeLabs\Harvest\Transformer;
 use DecodeLabs\Horizon\Page as HorizonPage;
 use DecodeLabs\Monarch;
-use Psr\Http\Message\ResponseInterface as Response;
-use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Message\ResponseInterface as PsrResponse;
+use Psr\Http\Message\ServerRequestInterface as PsrRequest;
 
 /**
  * @implements Transformer<HorizonPage>
@@ -22,9 +22,9 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 class Page implements Transformer
 {
     public function transform(
-        Request $request,
+        PsrRequest $request,
         mixed $page
-    ): Response {
+    ): PsrResponse {
         // TODO: add headers
         return Harvest::html(
             $page->render(

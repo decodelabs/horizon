@@ -11,6 +11,7 @@ namespace DecodeLabs\Greenleaf\PageAction;
 
 use DecodeLabs\Exceptional;
 use DecodeLabs\Greenleaf\ActionTrait;
+use DecodeLabs\Greenleaf\Middleware;
 use DecodeLabs\Greenleaf\PageAction;
 use DecodeLabs\Greenleaf\PageActionTrait;
 use DecodeLabs\Greenleaf\Route;
@@ -20,6 +21,7 @@ use DecodeLabs\Greenleaf\Request as LeafRequest;
 use DecodeLabs\Horizon\Page;
 use DecodeLabs\Tagged\Component\Fragment;
 use DecodeLabs\Monarch;
+use ReflectionAttribute;
 use ReflectionFunction;
 
 class Php implements PageAction
@@ -29,12 +31,38 @@ class Php implements PageAction
 
     public int $priority = 5;
 
+    private Fragment $fragment;
+
     /**
      * Handle HTTP request
      */
     public function execute(
         LeafRequest $request
     ): mixed {
+        $fragment = $this->loadFragment($request);
+        $fragment->slingshot = $this->prepareSlingshot($request);
+
+        return new Page($fragment);
+    }
+
+    /**
+     * @return array<ReflectionAttribute<Middleware>>
+     */
+    protected function getMiddlewareAttributes(
+        LeafRequest $request
+    ): array {
+        $fragment = $this->loadFragment($request);
+        $ref = new ReflectionFunction($fragment->fragment);
+        return $ref->getAttributes(Middleware::class);
+    }
+
+    private function loadFragment(
+        LeafRequest $request
+    ): Fragment {
+        if(isset($this->fragment)) {
+            return $this->fragment;
+        }
+
         $path = '@pages/'.ltrim($request->leafUrl->getPath(), '/');
         $resolvedPath = Monarch::$paths->resolve($path);
 
@@ -45,11 +73,9 @@ class Php implements PageAction
             );
         }
 
-        $fragment = new Fragment($resolvedPath);
-        $fragment->slingshot = $this->prepareSlingshot($request);
-
-        return new Page($fragment);
+        return $this->fragment = new Fragment($resolvedPath);
     }
+
 
     /**
      * Generator routes
