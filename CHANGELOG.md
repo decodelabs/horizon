@@ -1,3 +1,6 @@
+## v0.4.6 (2025-05-15)
+* Propagate Page into Fragment Slingshot
+
 ## v0.4.5 (2025-05-09)
 * Upgraded Harvest to v0.5.0
 * Upgraded Greenleaf to v0.8.0

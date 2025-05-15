@@ -61,6 +61,10 @@ class Page implements
     public function __construct(
         mixed $content = null
     ) {
+        if($content instanceof Fragment) {
+            $content->slingshot->addType($this, Page::class);
+        }
+
         $this->__constructHead();
         $this->__constructBody($content);
         $this->htmlTag = new Tag('html', ['lang' => 'en']);
