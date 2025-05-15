@@ -36,7 +36,9 @@ class Fragment extends Tag implements Component
     private bool $loaded = false;
     private bool $rendering = false;
 
-    public ?Slingshot $slingshot = null;
+    public Slingshot $slingshot {
+        get => $this->slingshot ??= new Slingshot();
+    }
 
     /**
      * Generate fragment
@@ -84,9 +86,8 @@ class Fragment extends Tag implements Component
     ): ?Buffer {
         $this->rendering = true;
 
-        $slingshot = $this->slingshot ?? new Slingshot(
-            parameters: $this->parameters,
-        );
+        $slingshot = $this->slingshot;
+        $slingshot->addParameters($this->parameters);
 
         /** @var array<string,mixed> $parameters */
         $output = $slingshot->invoke(
