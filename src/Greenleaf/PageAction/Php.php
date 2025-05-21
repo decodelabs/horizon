@@ -85,7 +85,7 @@ class Php implements PageAction
         foreach($this->scanPageFiles('php') as $name => $file) {
             /** @var array<Route> */
             $routes = [];
-            $fragment = new Fragment($file->getPath());
+            $fragment = new Fragment($file->path);
             $ref = new ReflectionFunction($fragment->fragment);
             $attributes = $ref->getAttributes();
             /** @var array<Parameter> */
