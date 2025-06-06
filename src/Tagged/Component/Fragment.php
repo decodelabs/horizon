@@ -13,6 +13,8 @@ use Attribute;
 use Closure;
 use DecodeLabs\Exceptional;
 use DecodeLabs\Horizon\FragmentLoader;
+use DecodeLabs\Nuance\Dumpable;
+use DecodeLabs\Nuance\Entity\NativeObject as NuanceEntity;
 use DecodeLabs\Slingshot;
 use DecodeLabs\Tagged\Buffer;
 use DecodeLabs\Tagged\Component;
@@ -22,7 +24,9 @@ use DecodeLabs\Tagged\Tag;
 use ReflectionAttribute;
 use ReflectionFunction;
 
-class Fragment extends Tag implements Component
+class Fragment extends Tag implements
+    Component,
+    Dumpable
 {
     use RenderableTrait;
 
@@ -134,20 +138,18 @@ class Fragment extends Tag implements Component
     }
 
 
-    /**
-     * Dump for glitch
-     */
-    public function glitchDump(): iterable
+
+    public function toNuanceEntity(): NuanceEntity
     {
         if(!$this->rendering) {
-            return parent::glitchDump();
+            return parent::toNuanceEntity();
         }
 
-        yield 'properties' => [
-            'fragment' => $this->fragment,
-            'parameters' => $this->parameters,
-            '!rendering' => $this->rendering,
-            '!loaded' => $this->loaded
-        ];
+        $entity = new NuanceEntity($this);
+        $entity->setProperty('fragment', $this->fragment);
+        $entity->setProperty('parameters', $this->parameters);
+        $entity->setProperty('rendering', $this->rendering, 'private');
+        $entity->setProperty('loaded', $this->loaded, 'private');
+        return $entity;
     }
 }
