@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 namespace DecodeLabs\Horizon\Property;
 
-use Closure;
 use DecodeLabs\Tagged\PriorityMarkup;
 use DecodeLabs\Tagged\Tag;
 

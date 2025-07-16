@@ -15,16 +15,16 @@ use DecodeLabs\Monarch;
 
 class FragmentLoader
 {
-    protected(set) string $path;
-    protected(set) ?string $resolvedPath = null;
-    protected(set) ?Closure $fragment = null;
+    public protected(set) string $path;
+    public protected(set) ?string $resolvedPath = null;
+    public protected(set) ?Closure $fragment = null;
 
     public function __construct(
         string $path
     ) {
         $this->path = $path;
 
-        if(!str_ends_with($path, '.php')) {
+        if (!str_ends_with($path, '.php')) {
             $path .= '.php';
         }
 
@@ -33,11 +33,11 @@ class FragmentLoader
 
     public function load(): Closure
     {
-        if($this->fragment) {
+        if ($this->fragment) {
             return $this->fragment;
         }
 
-        if(
+        if (
             $this->resolvedPath === null ||
             !is_file($this->resolvedPath)
         ) {
@@ -49,14 +49,14 @@ class FragmentLoader
 
         $fragment = require $this->resolvedPath;
 
-        if(!is_callable($fragment)) {
+        if (!is_callable($fragment)) {
             throw Exceptional::Setup(
                 'Fragment returned from file must be callable',
                 data: $this->resolvedPath
             );
         }
 
-        if($fragment instanceof Closure) {
+        if ($fragment instanceof Closure) {
             $this->fragment = $fragment;
         } else {
             $this->fragment = Closure::fromCallable($fragment);

@@ -61,7 +61,7 @@ class Page implements
     public function __construct(
         mixed $content = null
     ) {
-        if($content instanceof Fragment) {
+        if ($content instanceof Fragment) {
             $content->slingshot->addType($this, Page::class);
         }
 
@@ -76,9 +76,7 @@ class Page implements
     ): Buffer {
         $body = $this->renderBody($pretty);
 
-        /**
-         * @var Buffer $buffer
-         */
+        /** @var Buffer $buffer */
         $buffer = $this->htmlTag->renderWith(
             content: [
                 $this->renderHead($pretty),
@@ -87,7 +85,7 @@ class Page implements
             pretty: $pretty
         ) ?? new Buffer('<html><head></head><body></body></html>');
 
-        $buffer->prepend('<!DOCTYPE html>'."\n");
+        $buffer->prepend('<!DOCTYPE html>' . "\n");
         return $buffer;
     }
 
@@ -99,7 +97,7 @@ class Page implements
         string|Decorator $decorator,
         mixed ...$parameters
     ): static {
-        if(is_string($decorator)) {
+        if (is_string($decorator)) {
             $class = Archetype::resolve(Decorator::class, ucfirst($decorator));
             $decorator = new $class();
         }

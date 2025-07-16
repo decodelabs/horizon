@@ -39,7 +39,7 @@ trait HeadTrait
         get {
             $title = Coercion::tryString($this->rawTitle);
 
-            if($this->titleDecorator === null) {
+            if ($this->titleDecorator === null) {
                 return $title ?? 'untitled';
             }
 
@@ -56,7 +56,7 @@ trait HeadTrait
     /**
      * @var array<string,PriorityMarkup<Markup>>
      */
-    protected(set) array $appendHead = [];
+    public protected(set) array $appendHead = [];
 
     public Tag $headTag;
 
@@ -73,7 +73,7 @@ trait HeadTrait
         Markup $value,
         int $priority = 0
     ): static {
-        if(!$value instanceof PriorityMarkup) {
+        if (!$value instanceof PriorityMarkup) {
             $value = new PriorityMarkup($value, $priority);
         }
 
@@ -125,14 +125,14 @@ trait HeadTrait
         bool $pretty = false
     ): Buffer {
         return $this->headTag->renderWith(
-            content: function() {
+            content: function () {
                 // Charset
                 yield new Element('meta', null, ['charset' => $this->charset]);
 
                 // Title
                 yield new Element('title', $this->title);
 
-                if(
+                if (
                     $this->base !== null ||
                     $this->baseTarget !== null
                 ) {
@@ -143,42 +143,42 @@ trait HeadTrait
                 }
 
                 // Links
-                if(!empty($this->links)) {
-                    uasort($this->links, function($a, $b) {
+                if (!empty($this->links)) {
+                    uasort($this->links, function ($a, $b) {
                         return $a->priority <=> $b->priority;
                     });
 
-                    foreach($this->links as $tag) {
+                    foreach ($this->links as $tag) {
                         yield $tag->markup;
                     }
                 }
 
 
                 // Scripts
-                if(!empty($this->scripts)) {
-                    uasort($this->scripts, function($a, $b) {
+                if (!empty($this->scripts)) {
+                    uasort($this->scripts, function ($a, $b) {
                         return $a->priority <=> $b->priority;
                     });
 
-                    foreach($this->scripts as $tag) {
+                    foreach ($this->scripts as $tag) {
                         yield $tag->markup;
                     }
                 }
 
 
                 // Meta
-                foreach($this->meta as $tag) {
+                foreach ($this->meta as $tag) {
                     yield $tag;
                 }
 
 
                 // Append head
-                if(!empty($this->appendHead)) {
-                    uasort($this->appendHead, function($a, $b) {
+                if (!empty($this->appendHead)) {
+                    uasort($this->appendHead, function ($a, $b) {
                         return $a->priority <=> $b->priority;
                     });
 
-                    foreach($this->appendHead as $tag) {
+                    foreach ($this->appendHead as $tag) {
                         yield $tag->markup;
                     }
                 }

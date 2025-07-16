@@ -31,7 +31,7 @@ trait BodyTrait
     /**
      * @var array<string,PriorityMarkup<Markup>>
      */
-    protected(set) array $appendBody = [];
+    public protected(set) array $appendBody = [];
 
     public Tag $bodyTag;
 
@@ -45,9 +45,9 @@ trait BodyTrait
          * @param callable|Fragment|Closure(mixed $content):(mixed)|null $layout
          */
         set(callable|Fragment|Closure|null $layout) {
-            if($layout instanceof Fragment) {
+            if ($layout instanceof Fragment) {
                 $layout->bind($this);
-            } else if(
+            } elseif (
                 !$layout instanceof Closure &&
                 is_callable($layout)
             ) {
@@ -75,7 +75,7 @@ trait BodyTrait
         Markup $value,
         int $priority = 0
     ): static {
-        if(!$value instanceof PriorityMarkup) {
+        if (!$value instanceof PriorityMarkup) {
             $value = new PriorityMarkup($value, $priority);
         }
 
@@ -127,51 +127,49 @@ trait BodyTrait
     ): Buffer {
         $content = $this->content;
 
-        if($content instanceof Fragment) {
+        if ($content instanceof Fragment) {
             $content->bind($this);
             $content = $content->render($pretty);
-        } elseif($content instanceof Closure) {
+        } elseif ($content instanceof Closure) {
             $content = $content($this);
         }
 
-        /**
-         * @var Buffer $output
-         */
+        /** @var Buffer $output */
         $output = $this->bodyTag->renderWith(
-            content: function() use($content, $pretty) {
+            content: function () use ($content, $pretty) {
                 // Content
                 $content = ContentCollection::normalize($content, $pretty);
 
                 // Layout
-                if($this->layout instanceof Fragment) {
+                if ($this->layout instanceof Fragment) {
                     $content = $this->layout->__invoke(
                         content: $content,
                         pretty: $pretty
                     );
-                } elseif($this->layout) {
+                } elseif ($this->layout) {
                     $content = ($this->layout)($content);
                 }
 
                 yield $content;
 
                 // Append body
-                if(!empty($this->appendBody)) {
-                    uasort($this->appendBody, function($a, $b) {
+                if (!empty($this->appendBody)) {
+                    uasort($this->appendBody, function ($a, $b) {
                         return $a->priority <=> $b->priority;
                     });
 
-                    foreach($this->appendBody as $tag) {
+                    foreach ($this->appendBody as $tag) {
                         yield $tag->markup;
                     }
                 }
 
                 // Scripts
-                if(!empty($this->bodyScripts)) {
-                    uasort($this->bodyScripts, function($a, $b) {
+                if (!empty($this->bodyScripts)) {
+                    uasort($this->bodyScripts, function ($a, $b) {
                         return $a->priority <=> $b->priority;
                     });
 
-                    foreach($this->bodyScripts as $tag) {
+                    foreach ($this->bodyScripts as $tag) {
                         yield $tag->markup;
                     }
                 }
@@ -188,12 +186,12 @@ trait BodyTrait
     ): Buffer {
         $content = $this->content;
 
-        if($content instanceof Fragment) {
+        if ($content instanceof Fragment) {
             $content->bind($this);
             return $content->render($pretty) ?? new Buffer('');
         }
 
-        if($content instanceof Closure) {
+        if ($content instanceof Closure) {
             $content = ($content)($this);
         }
 

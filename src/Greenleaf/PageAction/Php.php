@@ -14,13 +14,13 @@ use DecodeLabs\Greenleaf\ActionTrait;
 use DecodeLabs\Greenleaf\Middleware;
 use DecodeLabs\Greenleaf\PageAction;
 use DecodeLabs\Greenleaf\PageActionTrait;
+use DecodeLabs\Greenleaf\Request as LeafRequest;
 use DecodeLabs\Greenleaf\Route;
 use DecodeLabs\Greenleaf\Route\Page as PageRoute;
 use DecodeLabs\Greenleaf\Route\Parameter;
-use DecodeLabs\Greenleaf\Request as LeafRequest;
 use DecodeLabs\Horizon\Page;
-use DecodeLabs\Tagged\Component\Fragment;
 use DecodeLabs\Monarch;
+use DecodeLabs\Tagged\Component\Fragment;
 use ReflectionAttribute;
 use ReflectionFunction;
 
@@ -59,16 +59,16 @@ class Php implements PageAction
     private function loadFragment(
         LeafRequest $request
     ): Fragment {
-        if(isset($this->fragment)) {
+        if (isset($this->fragment)) {
             return $this->fragment;
         }
 
-        $path = '@pages/'.ltrim($request->leafUrl->getPath(), '/');
+        $path = '@pages/' . ltrim($request->leafUrl->getPath(), '/');
         $resolvedPath = Monarch::$paths->resolve($path);
 
-        if(!file_exists($resolvedPath)) {
+        if (!file_exists($resolvedPath)) {
             throw Exceptional::NotFound(
-                message: 'Page not found: '.$path,
+                message: 'Page not found: ' . $path,
                 http: 404
             );
         }
@@ -82,7 +82,7 @@ class Php implements PageAction
      */
     public function generateRoutes(): iterable
     {
-        foreach($this->scanPageFiles('php') as $name => $file) {
+        foreach ($this->scanPageFiles('php') as $name => $file) {
             /** @var array<Route> */
             $routes = [];
             $fragment = new Fragment($file->path);
@@ -91,40 +91,40 @@ class Php implements PageAction
             /** @var array<Parameter> */
             $parameters = [];
 
-            foreach($attributes as $attribute) {
-                if(is_a($attribute->name, Parameter::class, true)) {
+            foreach ($attributes as $attribute) {
+                if (is_a($attribute->name, Parameter::class, true)) {
                     $parameters[] = $attribute->newInstance();
                     continue;
                 }
 
-                if(is_a($attribute->name, Route::class, true)) {
+                if (is_a($attribute->name, Route::class, true)) {
                     $routes[] = $attribute->newInstance();
                     continue;
                 }
             }
 
-            if(empty($routes)) {
+            if (empty($routes)) {
                 $routes[] = new PageRoute(
                     pattern: $this->nameToPattern($name),
-                    target: $name.'.php'
+                    target: $name . '.php'
                 );
             }
 
             /** @var Route $route */
-            foreach($routes as $route) {
-                if(
+            foreach ($routes as $route) {
+                if (
                     $route instanceof PageRoute &&
                     !str_ends_with((string)$route->target, '.php')
                 ) {
-                    $route->target = $route->target->withPath(fn($path) => $path?->withExtension('php'));
+                    $route->target = $route->target->withPath(fn ($path) => $path?->withExtension('php'));
                 }
 
-                if(empty($route->methods)) {
+                if (empty($route->methods)) {
                     $route->forMethod('GET');
                 }
 
                 /** @var Parameter $parameter */
-                foreach($parameters as $parameter) {
+                foreach ($parameters as $parameter) {
                     $route->addParameter($parameter);
                 }
 

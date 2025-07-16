@@ -53,7 +53,7 @@ class Fragment extends Tag implements
     ) {
         parent::__construct(null);
 
-        if(is_string($fragment)) {
+        if (is_string($fragment)) {
             $loader = new FragmentLoader($fragment);
             $this->fragment = $loader->load();
             $this->loaded = true;
@@ -68,7 +68,7 @@ class Fragment extends Tag implements
     public function bind(
         object $object
     ): void {
-        if($this->loaded) {
+        if ($this->loaded) {
             $this->fragment = Closure::bind(
                 // @phpstan-ignore-next-line
                 $this->fragment,
@@ -115,8 +115,8 @@ class Fragment extends Tag implements
     protected function importParameters(
         array $parameters
     ): void {
-        foreach($parameters as $key => $value) {
-            if(!is_string($key)) {
+        foreach ($parameters as $key => $value) {
+            if (!is_string($key)) {
                 throw Exceptional::InvalidArgument(
                     'Fragment parameters must be passed as key/value pairs'
                 );
@@ -141,7 +141,7 @@ class Fragment extends Tag implements
 
     public function toNuanceEntity(): NuanceEntity
     {
-        if(!$this->rendering) {
+        if (!$this->rendering) {
             return parent::toNuanceEntity();
         }
 

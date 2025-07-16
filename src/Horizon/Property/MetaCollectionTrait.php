@@ -21,7 +21,7 @@ trait MetaCollectionTrait
     /**
      * @var array<string,Tag>
      */
-    protected(set) array $meta = [];
+    public protected(set) array $meta = [];
 
     /**
      * @param iterable<string,string|Tag> $meta
@@ -31,11 +31,11 @@ trait MetaCollectionTrait
         iterable $meta = [],
         string|Tag ...$metaList
     ): static {
-        foreach($meta as $key => $value) {
+        foreach ($meta as $key => $value) {
             $this->setMeta((string)$key, $value);
         }
 
-        foreach($metaList as $key => $value) {
+        foreach ($metaList as $key => $value) {
             $this->setMeta((string)$key, $value);
         }
 
@@ -56,7 +56,7 @@ trait MetaCollectionTrait
         $key = array_pop($parts);
         $nameKey = array_shift($parts) ?? 'name';
 
-        if(is_string($value)) {
+        if (is_string($value)) {
             $value = new Element('meta', null, [
                 $nameKey => $key,
                 'content' => $value
@@ -102,7 +102,8 @@ trait MetaCollectionTrait
     /**
      * @return $this
      */
-    public function clearMeta(): static {
+    public function clearMeta(): static
+    {
         $this->meta = [];
         return $this;
     }

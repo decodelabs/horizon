@@ -21,7 +21,7 @@ trait ScriptCollectionTrait
     /**
      * @var array<string,PriorityMarkup<Tag>>
      */
-    protected(set) array $scripts = [];
+    public protected(set) array $scripts = [];
 
     /**
      * @param array<string,string|int|float|bool|null> $attributes
@@ -35,7 +35,7 @@ trait ScriptCollectionTrait
         array $attributes = [],
         string|int|float|bool|null ...$attributeList
     ): static {
-        if($tag === null) {
+        if ($tag === null) {
             /** @var array<string,string|int|float|bool|null> $attributeList */
             $tag = new Element('script', $script, $attributeList + $attributes);
         }
@@ -77,11 +77,11 @@ trait ScriptCollectionTrait
      */
     public function getScripts(): array
     {
-        uasort($this->scripts, function($a, $b) {
+        uasort($this->scripts, function ($a, $b) {
             return $a->priority <=> $b->priority;
         });
 
-        return array_map(function($entry) {
+        return array_map(function ($entry) {
             return $entry->markup;
         }, $this->scripts);
     }

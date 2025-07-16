@@ -21,7 +21,7 @@ trait LinkCollectionTrait
     /**
      * @var array<string,PriorityMarkup<Tag>>
      */
-    protected(set) array $links = [];
+    public protected(set) array $links = [];
 
     /**
      * @param array<string,string|int|float|bool|null> $attributes
@@ -34,7 +34,7 @@ trait LinkCollectionTrait
         array $attributes = [],
         string|int|float|bool|null ...$attributeList
     ): static {
-        if($tag === null) {
+        if ($tag === null) {
             /** @var array<string,string|int|float|bool|null> $attributeList */
             $tag = new Element('link', null, $attributeList + $attributes);
         }
@@ -76,11 +76,11 @@ trait LinkCollectionTrait
      */
     public function getLinks(): array
     {
-        uasort($this->links, function($a, $b) {
+        uasort($this->links, function ($a, $b) {
             return $a->priority <=> $b->priority;
         });
 
-        return array_map(function($entry) {
+        return array_map(function ($entry) {
             return $entry->markup;
         }, $this->links);
     }
