@@ -21,7 +21,7 @@
     },
     "require-dev": {
         "decodelabs/phpstan-decodelabs": "^0.7.0",
-        "decodelabs/greenleaf": "^0.8.4",
+        "decodelabs/greenleaf": "^0.9",
         "decodelabs/harvest": "^0.6"
     },
     "conflict": {
