@@ -33,9 +33,11 @@ class Php implements PageAction
 
     private Fragment $fragment;
 
-    /**
-     * Handle HTTP request
-     */
+    public function scanSupportedMethods(): iterable
+    {
+        return ['get'];
+    }
+
     public function execute(
         LeafRequest $request
     ): mixed {
