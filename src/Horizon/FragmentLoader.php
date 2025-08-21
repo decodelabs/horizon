@@ -28,7 +28,7 @@ class FragmentLoader
             $path .= '.php';
         }
 
-        $this->resolvedPath = Monarch::$paths->resolve($path);
+        $this->resolvedPath = Monarch::getPaths()->resolve($path);
     }
 
     public function load(): Closure

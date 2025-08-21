@@ -66,7 +66,7 @@ class Php implements PageAction
         }
 
         $path = '@pages/' . ltrim($request->leafUrl->getPath(), '/');
-        $resolvedPath = Monarch::$paths->resolve($path);
+        $resolvedPath = Monarch::getPaths()->resolve($path);
 
         if (!file_exists($resolvedPath)) {
             throw Exceptional::NotFound(

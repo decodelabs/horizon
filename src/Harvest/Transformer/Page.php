@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace DecodeLabs\Harvest\Transformer\DecodeLabs\Horizon;
 
-use DecodeLabs\Harvest;
+use DecodeLabs\Harvest\Response\Html as HtmlResponse;
 use DecodeLabs\Harvest\Transformer;
 use DecodeLabs\Horizon\Page as HorizonPage;
 use DecodeLabs\Monarch;
@@ -26,7 +26,7 @@ class Page implements Transformer
         mixed $page
     ): PsrResponse {
         // TODO: add headers
-        return Harvest::html(
+        return new HtmlResponse(
             $page->render(
                 Monarch::isDevelopment()
             )

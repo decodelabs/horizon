@@ -9,9 +9,9 @@ declare(strict_types=1);
 
 namespace DecodeLabs\Horizon;
 
-use DecodeLabs\Archetype;
 use DecodeLabs\Coercion;
 use DecodeLabs\Elementary\Renderable;
+use DecodeLabs\Slingshot;
 use DecodeLabs\Tagged\Buffer;
 use DecodeLabs\Tagged\Component\Fragment;
 use DecodeLabs\Tagged\Tag;
@@ -98,8 +98,10 @@ class Page implements
         mixed ...$parameters
     ): static {
         if (is_string($decorator)) {
-            $class = Archetype::resolve(Decorator::class, ucfirst($decorator));
-            $decorator = new $class();
+            $decorator = new Slingshot()->resolveNamedInstance(
+                interface: Decorator::class,
+                name: ucfirst($decorator)
+            );
         }
 
         $decorator->decorate($this, ...$parameters);

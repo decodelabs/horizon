@@ -5,7 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Unreleased
---
+- Use Archetype as a Service
+- Upgraded Greenleaf to v0.10
+- Upgraded Harvest to v0.7
+- Upgraded Tagged to v0.21
 
 ---
 
