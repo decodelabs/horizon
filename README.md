@@ -15,6 +15,8 @@ Horizon provides a simple structure for building and rendering HTML views using 
 
 ## Installation
 
+This package requires PHP 8.4 or higher.
+
 Install via Composer:
 
 ```bash
