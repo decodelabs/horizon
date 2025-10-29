@@ -21,6 +21,7 @@ use DecodeLabs\Greenleaf\Route\Parameter;
 use DecodeLabs\Horizon\Page;
 use DecodeLabs\Monarch;
 use DecodeLabs\Tagged\Component\Fragment;
+use Psr\Http\Server\MiddlewareInterface as PsrMiddleware;
 use ReflectionAttribute;
 use ReflectionFunction;
 
@@ -48,14 +49,28 @@ class Php implements PageAction
     }
 
     /**
-     * @return array<ReflectionAttribute<Middleware>>
+     * @return array<ReflectionAttribute<Middleware|PsrMiddleware>>
      */
     protected function getMiddlewareAttributes(
         LeafRequest $request
     ): array {
         $fragment = $this->loadFragment($request);
         $ref = new ReflectionFunction($fragment->fragment);
-        return $ref->getAttributes(Middleware::class);
+        $output = [];
+
+        foreach ($ref->getAttributes() as $attribute) {
+            $class = $attribute->getName();
+
+            if (
+                $class === Middleware::class ||
+                is_a($class, PsrMiddleware::class, true)
+            ) {
+                /** @var ReflectionAttribute<Middleware|PsrMiddleware> $attribute */
+                $output[] = $attribute;
+            }
+        }
+
+        return $output;
     }
 
     private function loadFragment(
