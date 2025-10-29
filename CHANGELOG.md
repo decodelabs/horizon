@@ -5,7 +5,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Unreleased
+--
+
+---
+
+### [v0.5.2](https://github.com/decodelabs/horizon/commits/v0.5.2) - 29th October 2025
+
 - Allow using PSR-15 middleware as attributes directly
+
+[Full list of changes](https://github.com/decodelabs/horizon/compare/v0.5.1...v0.5.2)
 
 ---
 
