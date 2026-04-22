@@ -70,7 +70,6 @@ class Fragment extends Tag implements
     ): void {
         if ($this->loaded) {
             $this->fragment = Closure::bind(
-                // @phpstan-ignore-next-line
                 $this->fragment,
                 $object
             );
